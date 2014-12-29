@@ -26,14 +26,14 @@ import java.nio.ByteBuffer;
  * min sketch. The constructor also accepts width and depth parameters. The relationship between
  * width and epsilon (error) is width = Math.ceil(Math.exp(1.0)/epsilon). In simpler terms, the
  * lesser the error is, the greater is the width and hence the size of count min sketch.
- * The relationship between delta and depth is delta = Math.ceil(Math.log(1.0/delta)). In simpler
+ * The relationship between delta and depth is depth = Math.ceil(Math.log(1.0/delta)). In simpler
  * terms, the more the depth of the greater is the confidence.
- * The way it works is, if we estimate the number of times certain key is inserted (or appeared in
- * the stream), count min sketch uses pairwise independent hash functions equal to map the key to
- * different locations in count min sketch.
+ * The way it works is, if we need to estimate the number of times a certain key is inserted (or appeared in
+ * the stream), count min sketch uses pairwise independent hash functions to map the key to
+ * different locations in count min sketch and increment the counter.
  * <p/>
- * For example, if width = 10 and depth = 4, the hashcodes
- * of key "HELLO" using pairwise independent hash functions are 9812121, 6565512, 21312312, 8787008
+ * For example, if width = 10 and depth = 4, lets assume the hashcodes
+ * for key "HELLO" using pairwise independent hash functions are 9812121, 6565512, 21312312, 8787008
  * respectively. Then the counter in hashcode % width locations are incremented.
  * <p/>
  * 0   1   2   3   4   5   6   7   8   9
@@ -67,14 +67,14 @@ import java.nio.ByteBuffer;
  * | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |
  * --- --- --- --- --- --- --- --- --- ---
  * <p/>
- * Now if we get the estimated count for key "HELLO", same process is repeated again to get the
- * values in each position but the estimation count will be minimum of all values (to account for
+ * Now, to get the estimated count for key "HELLO", same process is repeated again to find the
+ * values in each position and the estimated count will be the minimum of all values (to account for
  * hash collisions).
  * <p/>
  * estimatedCount("HELLO") = min(1, 2, 1, 1)
  * <p/>
  * so even if there are multiple hash collisions, the returned value will be the best estimate
- * (upper bound) for the give key. The actual count can never be greater than this value.
+ * (upper bound) for the given key. The actual count can never be greater than this value.
  */
 public class CountMinSketch {
   // 1% estimation error with 1% probability (99% confidence) that the estimation breaks this limit
